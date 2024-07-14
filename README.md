@@ -9,6 +9,12 @@ Click on [TSFamiliesDownload.ps1](TSFamiliesDownload.ps1) (or in file list above
 
 ![Download button](images/download.png)
 
+⚠️ You may get a warning when downloading that the file is potentially harmful. For this file it's ok to continue downloading, because you are knowingly downloading a script that you intend to execute.
+
+In other scenarios, **please use extreme caution when downloading scripts**, especially if you *don't know* you're downloading a script or if someone you don't know is pressuring you (such as saying something is broken or insecure and this will "fix it"). I generally advise against downloading a script like this, but "sharing a script" is all I have time to accomplish right now.
+
+![Script download warning](images/warning.png)
+
 ## Make sure you can run PowerShell
 ### Windows
 PowerShell is built into Windows, but you may have to run a couple commands to allow the script to be executed by Windows, since by default Windows does not allow downloaded scripts to be run for security reasons.
@@ -40,16 +46,16 @@ PowerShell can be installed on Mac OS by following [Microsoft's instructions](ht
     ```
 
 2. Run the script.
-```
-.\TSFamiliesDownload.ps1
-```
+    ```
+    .\TSFamiliesDownload.ps1
+    ```
 
 - You may see a warning about executing unsafe scripts. If you do, enter "R" to run the script.
 - To prevent having to enter "R" every time you run the script, you can also "unblock" the file to mark it as safe on your computer.
 
-```
-Unblock-File TSFamiliesDownload.ps1
-```
+    ```
+    Unblock-File TSFamiliesDownload.ps1
+    ```
 
 ## Advanced options
 Here are some optional arguments that can be specified.
@@ -58,10 +64,11 @@ Here are some optional arguments that can be specified.
 - `-latestDate <date>` (like "2024-05-01"): Instead of downloading images starting with the current date, only download images as old as the date specified.
 
 ## Known shortcomings
-- Dependents commonly have images of their leftover lunch. While I understand what it would take technically to filter these out, I don't have the time to implement this, so all lunch images will be included in the bulk download.
+- Dependents may have images of their leftover lunch. While I understand what it would take technically to filter these out, I don't have the time to implement this, so all lunch images will be included in the bulk download.
 - I'm not sure how reliably images are sorted when discovered from the service. As a result, running the script multiple times may label multiple images in the same day differently. Therefore, if the script is run again, it will overwrite all images already downloaded and download them again, and the names of the image (e.g. 2024-05-01 (1), 2024-05-01 (2), ...) may get swapped or mixed around.
   - As a result, it's safest not to interrupt the script while downloading a second time to ensure no images get overwritten with a duplicate of a different image.
   - If you just want to run it again to download new pictures that weren't available last time, I suggest using the [date range options above](#advanced-options).
+- Images may have a short comment associated with them in the app/platform. These will not be included with the downloaded images.
 
 ## Have a problem or question?
 Let me know by [submitting an issue](https://github.com/JohnathonMohr/ts-families-bulk-download/issues/new)!.

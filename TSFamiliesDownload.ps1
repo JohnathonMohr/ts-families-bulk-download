@@ -111,6 +111,10 @@ while ($date -ge $earliestDate) {
     $eventCount = 0
 
     $earliestRequestDate = ([DateTimeOffset]$date.AddDays(-$eventRangeInDays))
+    if ($earliestRequestDate -lt $earliestDate) {
+        $earliestRequestDate = ([DateTimeOffset]$earliestDate)
+    }
+
     $latestRequestDate = ([DateTimeOffset]$date)
 
     Write-Host "   $($earliestRequestDate.ToString("d")) - $($latestRequestDate.ToString("d"))"

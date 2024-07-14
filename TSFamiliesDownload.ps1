@@ -46,6 +46,8 @@ $authBody = "email=" + [uri]::EscapeDataString($userName) + "&service=tadpoles&p
 # So &tz=America%2FLos_Angeles is hard-coded for now.
 $admitBody = "state=client&tz=America%2FLos_Angeles&battery_level=-1&locale=en-US&platform_version=17.5.1&logged_in=1&uses_dst=$usesDst&utc_offset=$utcOffsetString&v=2"
 
+$ProgressPreference = 'SilentlyContinue'
+
 # Log in to tadpoles
 try {
     $resp = Invoke-WebRequest -Method Post -Uri https://www.tadpoles.com/auth/login -Body $authBody -SessionVariable webSession 
@@ -159,27 +161,46 @@ while ($date -ge $earliestDate) {
     $date = $date.AddDays(-$eventRangeInDays)
 }
 
-# Set up synced hashtable to track parallel image download progress
-$completedImages = @{}
-$imageKeys | ForEach-Object {
-    $completedImages[$_.key] = $false
-}
-$sync = [System.Collections.Hashtable]::Synchronized($completedImages)
-
 $totalImages = $imageKeys.Count
 Write-Host "Downloading $totalImages images"
 
-$downloadJob = $imageKeys | ForEach-Object -ThrottleLimit 5 -AsJob -Parallel {
-    $syncCopy = $using:sync
-    $resp = Invoke-WebRequest -Method Get -Uri $_.uri -WebSession $using:webSession -OutFile "$($_.childName)\$($_.imageName)"
+# Downloads images in parallel if supported
+if ($PSVersionTable.PSVersion.Major -ge 7) {
+    # Set up synced hashtable to track parallel image download progress
+    $completedImages = @{}
+    $imageKeys | ForEach-Object {
+        $completedImages[$_.key] = $false
+    }
+    $sync = [System.Collections.Hashtable]::Synchronized($completedImages)
 
-    $syncCopy[$_.key] = $true
+    $downloadJob = $imageKeys | ForEach-Object -ThrottleLimit 5 -AsJob -Parallel {
+        $syncCopy = $using:sync
+        $resp = Invoke-WebRequest -Method Get -Uri $_.uri -WebSession $using:webSession -OutFile "$($_.childName)\$($_.imageName)"
+
+        $syncCopy[$_.key] = $true
+    }
+
+    while ($downloadJob.State -ne "Completed") {
+        $progress = $sync.Values | Where-Object { $_ -eq $true } | Measure-Object | Select-Object -ExpandProperty Count
+
+        $ProgressPreference = 'Continue'
+        Write-Progress -Activity "Downloading Images" -Status "Progress: $progress/$totalImages" -PercentComplete (($progress / $totalImages) * 100)
+        $ProgressPreference = 'SilentlyContinue'
+        
+        Start-Sleep -Seconds 1
+    }
 }
+# Downloads images sequentially if parallel downloads are not supported
+else {
+    $progress = 0
+    $imageKeys | ForEach-Object {
+        $resp = Invoke-WebRequest -Method Get -Uri $_.uri -WebSession $webSession -OutFile "$($_.childName)\$($_.imageName)"
+        $progress++
 
-while ($downloadJob.State -ne "Completed") {
-    $progress = $sync.Values | Where-Object { $_ -eq $true } | Measure-Object | Select-Object -ExpandProperty Count
-    Write-Progress -Activity "Downloading Images" -Status "Progress: $progress/$totalImages" -PercentComplete (($progress / $totalImages) * 100)
-    Start-Sleep -Seconds 1
+        $ProgressPreference = 'Continue'
+        Write-Progress -Activity "Downloading Images" -Status "Progress: $progress/$totalImages" -PercentComplete (($progress / $totalImages) * 100)
+        $ProgressPreference = 'SilentlyContinue'
+    }
 }
 
 Write-Host "Download complete"

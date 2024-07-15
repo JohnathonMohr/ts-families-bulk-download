@@ -45,7 +45,7 @@ PowerShell can be installed on Mac OS by following [Microsoft's instructions](ht
     cd $env:userprofile\downloads
     ```
 
-2. Run the script.
+2. Run the script. (Make sure you followed step 3 from [Make sure you can run PowerShell](#make-sure-you-can-run-powershell) first if running on Windows)
     ```
     .\TSFamiliesDownload.ps1
     ```

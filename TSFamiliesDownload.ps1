@@ -150,11 +150,16 @@ while ($date -ge $earliestDate) {
 
                 $imageCountPerDate[$eventDate] = $imageCountPerDate[$eventDate] + 1
 
+                $fileExt = "jpg"
+                if ($_.mime_type -eq "video/mp4") {
+                    $fileExt = "mp4"
+                }
+
                 $imageKeys += @{
                     key = $_.key
                     childName = $dependants[$member].name
                     uri = $tadpolesApi + "/attachment?thumbnail=false&key=$($_.key)"
-                    imageName = "$eventDate ($($imageCountPerDate[$eventDate])).jpg"
+                    imageName = "$eventDate ($($imageCountPerDate[$eventDate])).$fileExt"
                 }
             }
 

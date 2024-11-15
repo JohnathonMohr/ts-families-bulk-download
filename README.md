@@ -1,8 +1,11 @@
-# Bulk download pictures from TS Families
-This repository hosts a PowerShell script that can be used to download pictures of your dependent(s) in bulk from the Teaching Strategies Families platform (a.k.a. TS Families or "Tadpoles").
+# ⚠️ This script is redundant
+At the time I wrote the script, I did not realize that Tadpoles had a web portal at https://www.tadpoles.com. Simply logging into the portal provides access to the same "bulk download" capability. This script is therefore not needed at all, but I will leave it here for archival purposes.
+
+# Bulk download pictures from TS Family
+This repository hosts a PowerShell script that can be used to download pictures of your dependent(s) in bulk from the Teaching Strategies Family platform (a.k.a. TS Family or "Tadpoles").
 
 ## How the script works
-When the script is run, it will prompt for your TS Families username and password. After entering these, the script will log in, find your dependents, download their profile picture(s) to the directory the script is running in, and then search for all event records in the platform (starting with the current date, and going as far back as your dependent(s) were enrolled). Once this is complete, it will download all pictures found and save them under a folder with that dependent's name. Each picture will be named by the date it was taken followed by a number, so if there are multiple pictures for a day, they will be numbered (1), (2), etc...
+When the script is run, it will prompt for your TS Family username and password. After entering these, the script will log in, find your dependents, download their profile picture(s) to the directory the script is running in, and then search for all event records in the platform (starting with the current date, and going as far back as your dependent(s) were enrolled). Once this is complete, it will download all pictures found and save them under a folder with that dependent's name. Each picture will be named by the date it was taken followed by a number, so if there are multiple pictures for a day, they will be numbered (1), (2), etc...
 
 ## Downloading the script
 Click on [TSFamiliesDownload.ps1](TSFamiliesDownload.ps1) (or in file list above too). Then click the Download button (top right side of file) when the script loads in the browser. After downloading, come back to this page to continue reading the instructions.
